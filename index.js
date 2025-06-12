@@ -21,6 +21,9 @@ app.use("/v1/users", require("./src/routes/users.routes"));
 // Rutas de administración de usuarios
 app.use("/v1/admin/users", require("./src/routes/admin.users.routes"));
 
+// Rutas de diseños
+app.use("/v1/designs", require("./src/routes/designs.routes"));
+
 // Puerto
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
