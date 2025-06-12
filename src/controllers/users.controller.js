@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/users');
 
+
 // @route   POST /auth/register
 // @desc    Register new user
 // @access  Public
