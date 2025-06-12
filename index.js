@@ -10,8 +10,11 @@ connectDB();
 // Middlewares
 app.use(express.json());
 
-// Rutas
+// Rutas de usuarios normales
 app.use("/users", require("./src/routes/users.routes"));
+
+// Rutas de administración de usuarios
+app.use("/v1/admin/users", require("./src/routes/admin.users.routes"));
 
 // Puerto
 const PORT = process.env.PORT || 4000;
