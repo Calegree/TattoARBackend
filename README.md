@@ -1,6 +1,6 @@
-# TattoAR Backend
+# TattooAR Backend
 
-Backend para la plataforma TattoAR, desarrollado en Node.js, Express y MongoDB.
+Backend para la plataforma TattooAR, desarrollado en Node.js, Express y MongoDB.
 
 ## Instalación
 
