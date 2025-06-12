@@ -1,12 +1,18 @@
-// Lógica de negocio (crear, listar, etc)
-const Usuario = require('../models/users');
+const User = require("../models/user");
 
-exports.crearUsuario = async (req, res) => {
+// Crear usuario normal
+exports.createUser = async (req, res) => {
   try {
-    const nuevoUsuario = new Usuario(req.body);
+    const nuevoUsuario = new User(req.body);
     await nuevoUsuario.save();
     res.status(201).json(nuevoUsuario);
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al crear usuario' });
+    res.status(400).json({ mensaje: "Solicitud no válida" });
   }
+};
+
+// Obtener perfil propio (ejemplo)
+exports.getProfile = async (req, res) => {
+  // Implementa lógica según autenticación
+  res.json({ mensaje: "Perfil de usuario" });
 };
