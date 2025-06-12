@@ -1,5 +1,5 @@
 // Lógica de negocio (crear, listar, etc)
-const Usuario = require('../models/Usuario');
+const Usuario = require('../models/users');
 
 exports.crearUsuario = async (req, res) => {
   try {
