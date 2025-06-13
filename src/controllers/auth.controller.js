@@ -107,6 +107,7 @@ exports.verifyEmail = async (req, res) => {
 
     res.status(200).json({ message: 'Cuenta verificada y usuario creado correctamente.' });
   } catch (err) {
+    console.error(err);
     res.status(400).json({ message: 'Token inválido o expirado' });
   }
 };
@@ -133,6 +134,7 @@ exports.forgotPassword = async (req, res) => {
     
     res.status(200).json({ message: 'Correo de recuperación enviado' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Error en el servidor' });
   }
 };
@@ -149,6 +151,7 @@ exports.resetPasswordWithToken = async (req, res) => {
 
     res.status(200).json({ message: 'Contraseña restablecida con éxito' });
   } catch (err) {
+    console.error(err);
     res.status(400).json({ message: 'Token inválido o expirado' });
   }
 };
