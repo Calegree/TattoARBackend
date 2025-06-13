@@ -16,13 +16,15 @@ exports.listUsers = async (req, res) => {
 };
 
 // Crear usuario
+const { createUserService } = require("../services/user.service");
+
 exports.createUser = async (req, res) => {
+  const { fullName, email, password, role } = req.body;
   try {
-    const nuevoUsuario = new User(req.body);
-    await nuevoUsuario.save();
-    res.status(201).json(nuevoUsuario);
-  } catch (error) {
-    res.status(400).json({ mensaje: "Solicitud no válida" });
+    const user = await createUserService({ fullName, email, password, role });
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(400).json({ mensaje: err.message });
   }
 };
 
@@ -75,5 +77,20 @@ exports.changeStatus = async (req, res) => {
     res.status(200).json(usuario);
   } catch (error) {
     res.status(400).json({ mensaje: "Solicitud no válida" });
+  }
+};
+
+// Listar tatuadores
+exports.listTattooers = async (req, res) => {
+  try {
+    const { city, style, search } = req.query;
+    const filter = { role: "tattooer" };
+    if (city) filter.city = city;
+    if (search) filter.fullName = { $regex: search, $options: "i" };
+    if (style) filter["styles"] = { $regex: style, $options: "i" };
+    const tattooers = await User.find(filter).select("-password -__v");
+    res.status(200).json(tattooers);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al listar tatuadores" });
   }
 };

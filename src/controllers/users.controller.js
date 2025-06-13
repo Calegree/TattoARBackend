@@ -2,10 +2,33 @@ const User = require("../models/User");
 
 // Detallar usuario
 exports.getMe = async (req, res) => {
-  res.status(200).json(req.user);
+  try {
+    // Assuming user ID is available in req.user.id (e.g., after authentication middleware)
+     const usuario = await User.findById(req.user.id);
+    if (!usuario)
+      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    res.status(200).json(usuario);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al obtener usuario" });
+  }
 };
 
-// Actualizar usuario
+exports.listTattooers = async (req, res) => {
+  try {
+    const { city, style, search } = req.query;
+    const filter = { role: "tattooer" };
+
+    if (city) filter.city = city;
+    if (search) filter.fullName = { $regex: search, $options: "i" };
+    if (style) filter["styles"] = { $regex: style, $options: "i" }; // si tienes un campo styles
+
+    const tattooers = await User.find(filter).select("-password -__v");
+    res.status(200).json(tattooers);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al listar tatuadores" });
+  }
+};
+
 exports.updateMe = async (req, res) => {
   try {
     const usuario = await User.findByIdAndUpdate(req.user.id, req.body, {
@@ -37,7 +60,8 @@ exports.getUserById = async (req, res) => {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     res.status(200).json(usuario);
   } catch (error) {
-    res.status(500).json({ mensaje: "Error al obtener usuario" });
+    console.error("Error al obtener el perfil del usuario:", error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
