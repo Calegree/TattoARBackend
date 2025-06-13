@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const reportSchema = new mongoose.Schema({
   user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Quien reporta
-  reports_id: { type: mongoose.Schema.Types.ObjectId, required: true }, // Tatuador o Tattoo reportado
+  reports_id: { type: mongoose.Schema.Types.ObjectId, required: true }, // Tatuador o diseño reportado
   type: { type: String, enum: ['tattooer', 'design','claim'], required: true },
   reason: { type: String, required: true },
   description: { type: String, required: true },
