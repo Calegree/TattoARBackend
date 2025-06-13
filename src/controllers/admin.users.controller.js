@@ -1,5 +1,4 @@
 const User = require("../models/User");
-const bcrypt = require("bcrypt");
 
 // Listar usuarios
 exports.listUsers = async (req, res) => {
@@ -17,23 +16,12 @@ exports.listUsers = async (req, res) => {
 };
 
 // Crear usuario
+const { createUserService } = require("../services/user.service");
+
 exports.createUser = async (req, res) => {
   const { fullName, email, password, role } = req.body;
   try {
-    // Verifica si el email ya existe
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ mensaje: "El email ya está registrado" });
-    }
-    // Hashea la contraseña
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({
-      fullName,
-      email,
-      password: hashedPassword,
-      role,
-    });
-    await user.save();
+    const user = await createUserService({ fullName, email, password, role });
     res.status(201).json(user);
   } catch (err) {
     res.status(400).json({ mensaje: err.message });
