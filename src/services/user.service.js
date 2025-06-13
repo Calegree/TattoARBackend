@@ -25,7 +25,7 @@ async function createUserService({ fullName, email, password, role }) {
     process.env.JWT_SECRET,
     { expiresIn: "1d" }
   );
-  const verifyUrl = `http://localhost:4000/api/v1/auth/verify-email?token=${verifyToken}`;
+  const verifyUrl = `http://localhost:4000/v1/auth/verify-email?token=${verifyToken}`;
   console.log(verifyToken);
   await sendMail(
     email,
