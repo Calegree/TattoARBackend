@@ -10,6 +10,16 @@ connectDB();
 // Middlewares
 app.use(express.json());
 
+// Rutas de autenticación
+app.use("/v1/auth", require("./src/routes/auth.routes"));
+
+
+// Rutas de usuarios normales
+app.use("/v1/users", require("./src/routes/users.routes"));
+
+
+// Rutas de administración de usuarios
+app.use("/v1/admin/users", require("./src/routes/admin.users.routes"));
 // Rutas
 app.use('/api/logs', require('./src/routes/logs.routes'));
 app.use('/api/reports', require('./src/routes/reports.routes'));
