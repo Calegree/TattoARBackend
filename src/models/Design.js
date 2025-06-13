@@ -42,5 +42,10 @@ const designSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    state: {
+        type: String,
+        enum: ['banned', 'active'],
+        default: 'active'
+    },
 });
 module.exports = mongoose.model('Design', designSchema);

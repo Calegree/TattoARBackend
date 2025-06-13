@@ -19,6 +19,9 @@ app.use("/v1/users", require("./src/routes/users.routes"));
 // Rutas de administración de usuarios
 app.use("/v1/admin/users", require("./src/routes/admin.users.routes"));
 
+// Rutas de administración de diseños
+app.use("/v1/admin/designs", require("./src/routes/admin.designs.routes"));
+
 // Rutas
 app.use('/v1/logs', require('./src/routes/logs.routes'));
 app.use('/v1/reports', require('./src/routes/reports.routes'));
