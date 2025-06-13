@@ -5,6 +5,7 @@ exports.getAllReports = async (req, res) => {
     const reports = await Report.find();
     res.status(200).json(reports);
   } catch (error) {
+    console.error('Error al obtener los reportes:', error);
     res.status(500).json({ mensaje: 'Error al obtener los reportes' });
   }
 }
@@ -21,6 +22,7 @@ exports.rejectReport = async (req, res) => {
     }
     res.status(200).json(updatedReport);
   } catch (error) {
+    console.error('Error al actualizar el reporte:', error);
     res.status(500).json({ mensaje: 'Error al actualizar el reporte' });
   }
 };
@@ -38,6 +40,7 @@ exports.acceptReport = async (req, res) => {
     }
     res.status(200).json(updatedReport);
   } catch (error) {
+    console.error('Error al actualizar el reporte:', error);
     res.status(500).json({ mensaje: 'Error al actualizar el reporte' });
   }
 };
