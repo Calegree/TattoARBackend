@@ -47,5 +47,6 @@ const designSchema = new mongoose.Schema({
         enum: ['banned', 'active'],
         default: 'active'
     },
+    reportCount: { type: Number, default: 0 },
 });
 module.exports = mongoose.model('Design', designSchema);

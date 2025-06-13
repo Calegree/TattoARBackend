@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Report = require("../models/Report");
 
 // Detallar usuario
 exports.getMe = async (req, res) => {
@@ -9,6 +10,7 @@ exports.getMe = async (req, res) => {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     res.status(200).json(usuario);
   } catch (error) {
+    console.error("Error al obtener usuario:", error);
     res.status(500).json({ mensaje: "Error al obtener usuario" });
   }
 };
@@ -25,6 +27,7 @@ exports.listTattooers = async (req, res) => {
     const tattooers = await User.find(filter).select("-password -__v");
     res.status(200).json(tattooers);
   } catch (error) {
+    console.error("Error al listar tatuadores:", error);
     res.status(500).json({ mensaje: "Error al listar tatuadores" });
   }
 };
@@ -38,6 +41,7 @@ exports.updateMe = async (req, res) => {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     res.status(200).json(usuario);
   } catch (error) {
+    console.error("Error al actualizar usuario:", error);
     res.status(400).json({ mensaje: "Solicitud no válida" });
   }
 };
@@ -48,6 +52,7 @@ exports.deleteMe = async (req, res) => {
     await User.findByIdAndDelete(req.user.id);
     res.status(204).json({ mensaje: "Usuario eliminado correctamente" });
   } catch (error) {
+    console.error("Error al eliminar usuario:", error);
     res.status(500).json({ mensaje: "Error al eliminar usuario" });
   }
 };
@@ -104,6 +109,44 @@ exports.removeFavorite = async (req, res) => {
   } catch (error) {
     console.error("Error al eliminar favorito:", error);
     res.status(500).json({ code: 500, message: 'Error al eliminar favorito' });
+  }
+};
+
+// Report 
+
+exports.sendReport = async (req, res) => {
+  try {
+    const { reports_id, type, reason, description, image } = req.body;
+
+    if (!reports_id || !type || !reason || !description) {
+      return res.status(400).json({ mensaje: 'Faltan campos obligatorios' });
+    }
+
+    // Crear el nuevo reporte
+    const newReport = new Report({
+      user_id: req.user.id, // Asegúrate de que el middleware de autenticación esté estableciendo `req.user`
+      reports_id,
+      type,
+      reason,
+      description,
+      image
+    });
+
+    await newReport.save();
+
+    // Si es un reporte a un tatuador o diseño, incrementar su contador
+    if (type === 'tattooer' || type === 'design') {
+      await User.findByIdAndUpdate(
+        reports_id,
+        { $inc: { reportCounter: 1 } },
+        { new: true }
+      );
+    }
+
+    res.status(201).json({ mensaje: 'Reporte enviado correctamente', reporte: newReport });
+  } catch (error) {
+    console.error('Error al enviar el reporte:', error);
+    res.status(500).json({ mensaje: 'Error al enviar el reporte' });
   }
 };
 
