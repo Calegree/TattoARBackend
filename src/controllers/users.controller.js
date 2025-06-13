@@ -3,7 +3,8 @@ const User = require("../models/User");
 // Detallar usuario
 exports.getMe = async (req, res) => {
   try {
-    const usuario = await User.findById(req.user.id);
+    // Assuming user ID is available in req.user.id (e.g., after authentication middleware)
+     const usuario = await User.findById(req.user.id);
     if (!usuario)
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     res.status(200).json(usuario);
@@ -12,7 +13,22 @@ exports.getMe = async (req, res) => {
   }
 };
 
-// Actualizar usuario
+exports.listTattooers = async (req, res) => {
+  try {
+    const { city, style, search } = req.query;
+    const filter = { role: "tattooer" };
+
+    if (city) filter.city = city;
+    if (search) filter.fullName = { $regex: search, $options: "i" };
+    if (style) filter["styles"] = { $regex: style, $options: "i" }; // si tienes un campo styles
+
+    const tattooers = await User.find(filter).select("-password -__v");
+    res.status(200).json(tattooers);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al listar tatuadores" });
+  }
+};
+
 exports.updateMe = async (req, res) => {
   try {
     const usuario = await User.findByIdAndUpdate(req.user.id, req.body, {
@@ -44,6 +60,50 @@ exports.getUserById = async (req, res) => {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     res.status(200).json(usuario);
   } catch (error) {
-    res.status(500).json({ mensaje: "Error al obtener usuario" });
+    console.error("Error al obtener el perfil del usuario:", error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
+
+// manage user favorites
+exports.listFavorites = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate('favorites');
+    res.status(200).json(user.favorites);
+  } catch (error) {
+    console.error("Error al listar favoritos:", error);
+    res.status(500).json({ code: 500, message: 'Error al obtener favoritos' });
+  }
+};
+exports.addFavorite = async (req, res) => {
+  try {
+    const { designId } = req.body;
+    if (!designId) return res.status(400).json({ code: 400, message: 'designId requerido' });
+
+    const user = await User.findById(req.user.id);
+    if (!user.favorites.includes(designId)) {
+      user.favorites.push(designId);
+      await user.save();
+    }
+
+    res.status(201).json({ code: 201, message: 'Agregado correctamente a favoritos.' });
+  } catch (error) {
+    console.error("Error al agregar a favoritos:", error);
+    res.status(500).json({ code: 500, message: 'Error al agregar favorito' });
+  }
+};
+exports.removeFavorite = async (req, res) => {
+  try {
+    const { designId } = req.params;
+    const user = await User.findById(req.user.id);
+
+    user.favorites = user.favorites.filter(favId => favId.toString() !== designId);
+    await user.save();
+
+    res.status(204).json({ code: 204, message: 'Solicitud procesada correctamente.' });
+  } catch (error) {
+    console.error("Error al eliminar favorito:", error);
+    res.status(500).json({ code: 500, message: 'Error al eliminar favorito' });
+  }
+};
+

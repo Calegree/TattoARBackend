@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const usersController = require("../controllers/users.controller");
+const authenticate = require("../middlewares/auth.middleware");
 const authMiddleware = require("../middlewares/auth.middleware");
 
 
@@ -24,5 +25,10 @@ router.put('/me', authMiddleware, usersController.updateMe);
 // @desc    Delete current user account
 // @access  Private
 router.delete('/me', authMiddleware, usersController.deleteMe);
+
+// Favoritos
+router.get("/me/favorites", authenticate, usersController.listFavorites);
+router.post("/me/favorites", authenticate, usersController.addFavorite);
+router.delete("/me/favorites/:designId", authenticate, usersController.removeFavorite);
 
 module.exports = router;

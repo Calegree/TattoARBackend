@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const { sendMail } = require('../utils/nodemailer');
-
+const { createUserService } = require("../services/user.service");
 
 // @route   POST /auth/register
 // @desc    Register new user
@@ -22,47 +22,10 @@ exports.register = async (req, res) => {
   } = req.body;
 
   try {
-    // 1. Verificar existencia
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ code: 400, message: 'Email ya registrado' });
-    }
-
-    // 2. Encriptar contraseña
-    const salt = await bcrypt.genSalt(10);
-    const hashed = await bcrypt.hash(password, salt);
-
-    // 3. Generar token de verificación con los datos del usuario
-    const verifyToken = jwt.sign(
-      {
-        fullName,
-        email,
-        password: hashed,
-        role,
-        city,
-        profileImageUrl,
-        favorites,
-        socialMedia,
-        status,
-        designs
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    );
-    const verifyUrl = `http://localhost:4000/api/v1/auth/verify-email?token=${verifyToken}`;
-    console.log(verifyToken)
-
-    await sendMail(
-      email,
-      'Verifica tu cuenta',
-      `<p>Haz clic en el siguiente enlace para verificar tu cuenta:</p>
-       <a href="${verifyUrl}">${verifyUrl}</a>`
-    );
-    
-    res.status(201).json({ message: 'Revisa tu correo para verificar tu cuenta.' });
+    const user = await createUserService({ fullName, email, password, role });
+    res.status(201).json({ fullName: user.fullName, email: user.email });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ code: 500, message: 'Error en el servidor' });
+    res.status(400).json({ code: 400, message: err.message });
   }
 };
 
@@ -74,17 +37,32 @@ exports.login = async (req, res) => {
   try {
     const user = await User.findOne({ email });
 
-    if (!user) return res.status(401).json({ code:401, message: 'Credenciales inválidas' });
+    if (!user)
+      return res
+        .status(401)
+        .json({ code: 401, message: "Credenciales inválidas" });
     const isMatch = await bcrypt.compare(password, user.password);
-    
-    
-    if (!isMatch) return res.status(401).json({ code:401, message: 'Credenciales inválidas' });
+
+    if (!isMatch)
+      return res
+        .status(401)
+        .json({ code: 401, message: "Credenciales inválidas" });
     const payload = { id: user._id, role: user.role };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
-    res.status(200).json({ token, user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role } });
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
+    res.status(200).json({
+      token,
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ code:500, message: 'Error en el servidor' });
+    res.status(500).json({ code: 500, message: "Error en el servidor" });
   }
 };
 
@@ -107,14 +85,17 @@ exports.resetPassword = async (req, res) => {
   const { email, newPassword } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ code:404, message: 'Usuario no encontrado' });
+    if (!user)
+      return res
+        .status(404)
+        .json({ code: 404, message: "Usuario no encontrado" });
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(newPassword, salt);
     await user.save();
-    res.status(200).json({ message: 'Contraseña restablecida con éxito' });
+    res.status(200).json({ message: "Contraseña restablecida con éxito" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ code:500, message: 'Error en el servidor' });
+    res.status(500).json({ code: 500, message: "Error en el servidor" });
   }
 };
 
