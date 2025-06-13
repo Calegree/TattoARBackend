@@ -7,18 +7,68 @@ const User = require('../models/User');
 // @desc    Register new user
 // @access  Public
 exports.register = async (req, res) => {
-  const { fullName, email, password, role } = req.body;
+  // Desestructuramos TODOS los campos que quieres guardar
+  const {
+    fullName,
+    email,
+    password,
+    role,
+    city,
+    profileImageUrl,
+    favorites = [],
+    socialMedia = {},
+    status,
+    designs = []
+  } = req.body;
+
   try {
+    // 1. Verificar existencia
     let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ code:400, message: 'Email ya registrado' });
+    if (user) {
+      return res
+        .status(400)
+        .json({ code: 400, message: 'Email ya registrado' });
+    }
+
+    // 2. Encriptar contraseña
     const salt = await bcrypt.genSalt(10);
     const hashed = await bcrypt.hash(password, salt);
-    user = new User({ fullName, email, password: hashed, role });
+
+    // 3. Crear instancia con todos los campos
+    user = new User({
+      fullName,
+      email,
+      password: hashed,
+      role,
+      city,
+      profileImageUrl,
+      favorites,
+      socialMedia,
+      status,
+      designs
+    });
+
+    // 4. Guardar en DB
     await user.save();
-    res.status(201).json({ fullName: user.fullName, email: user.email });
+
+    // 5. Responder con los datos (puedes añadir token si quieres)
+    res.status(201).json({
+      id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      role: user.role,
+      city: user.city,
+      profileImageUrl: user.profileImageUrl,
+      favorites: user.favorites,
+      socialMedia: user.socialMedia,
+      status: user.status,
+      designs: user.designs
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ code:500, message: 'Error en el servidor' });
+    res
+      .status(500)
+      .json({ code: 500, message: 'Error en el servidor' });
   }
 };
 
@@ -45,10 +95,9 @@ exports.login = async (req, res) => {
 };
 
 // @route   POST /auth/logout
-// @desc    Logout (token invalidation TBD)
+// @desc    Logout (token invalidation frontend implementation)
 // @access  Private
 exports.logout = async (req, res) => {
-  // Implement token blacklist if needed
   res.status(204).send();
 };
 
