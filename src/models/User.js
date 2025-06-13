@@ -30,6 +30,7 @@ const userSchema = new Schema(
 
     designs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Design" }],
     portfolio: [{ type: mongoose.Schema.Types.ObjectId, ref: "Design" }],
+    reportCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

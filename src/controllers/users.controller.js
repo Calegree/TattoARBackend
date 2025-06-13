@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Report = require("../models/Report");
 
 // Detallar usuario
 exports.getMe = async (req, res) => {
@@ -108,6 +109,44 @@ exports.removeFavorite = async (req, res) => {
   } catch (error) {
     console.error("Error al eliminar favorito:", error);
     res.status(500).json({ code: 500, message: 'Error al eliminar favorito' });
+  }
+};
+
+// Report 
+
+exports.sendReport = async (req, res) => {
+  try {
+    const { reports_id, type, reason, description, image } = req.body;
+
+    if (!reports_id || !type || !reason || !description) {
+      return res.status(400).json({ mensaje: 'Faltan campos obligatorios' });
+    }
+
+    // Crear el nuevo reporte
+    const newReport = new Report({
+      user_id: req.user.id, // Asegúrate de que el middleware de autenticación esté estableciendo `req.user`
+      reports_id,
+      type,
+      reason,
+      description,
+      image
+    });
+
+    await newReport.save();
+
+    // Si es un reporte a un tatuador o diseño, incrementar su contador
+    if (type === 'tattooer' || type === 'design') {
+      await User.findByIdAndUpdate(
+        reports_id,
+        { $inc: { reportCounter: 1 } },
+        { new: true }
+      );
+    }
+
+    res.status(201).json({ mensaje: 'Reporte enviado correctamente', reporte: newReport });
+  } catch (error) {
+    console.error('Error al enviar el reporte:', error);
+    res.status(500).json({ mensaje: 'Error al enviar el reporte' });
   }
 };
 
