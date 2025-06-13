@@ -2,14 +2,7 @@ const User = require("../models/User");
 
 // Detallar usuario
 exports.getMe = async (req, res) => {
-  try {
-    const usuario = await User.findById(req.user.id);
-    if (!usuario)
-      return res.status(404).json({ mensaje: "Usuario no encontrado" });
-    res.status(200).json(usuario);
-  } catch (error) {
-    res.status(500).json({ mensaje: "Error al obtener usuario" });
-  }
+  res.status(200).json(req.user);
 };
 
 // Actualizar usuario
