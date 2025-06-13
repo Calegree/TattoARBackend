@@ -21,8 +21,8 @@ app.use("/v1/users", require("./src/routes/users.routes"));
 // Rutas de administración de usuarios
 app.use("/v1/admin/users", require("./src/routes/admin.users.routes"));
 // Rutas
-app.use('/api/logs', require('./src/routes/logs.routes'));
-app.use('/api/reports', require('./src/routes/reports.routes'));
+app.use('/v1/logs', require('./src/routes/logs.routes'));
+app.use('/v1/reports', require('./src/routes/reports.routes'));
 
 // Puerto
 const PORT = process.env.PORT || 4000;
