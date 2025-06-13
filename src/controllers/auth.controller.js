@@ -8,22 +8,10 @@ const { createUserService } = require("../services/user.service");
 // @desc    Register new user
 // @access  Public
 exports.register = async (req, res) => {
-  const {
-    fullName,
-    email,
-    password,
-    role,
-    city,
-    profileImageUrl,
-    favorites = [],
-    socialMedia = {},
-    status,
-    designs = []
-  } = req.body;
-
+  const { fullName, email, password, role } = req.body;
   try {
-    const user = await createUserService({ fullName, email, password, role });
-    res.status(201).json({ fullName: user.fullName, email: user.email });
+    const result = await createUserService({ fullName, email, password, role });
+    res.status(201).json(result);
   } catch (err) {
     res.status(400).json({ code: 400, message: err.message });
   }
