@@ -9,6 +9,7 @@ exports.getMe = async (req, res) => {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     res.status(200).json(usuario);
   } catch (error) {
+    console.error("Error al obtener usuario:", error);
     res.status(500).json({ mensaje: "Error al obtener usuario" });
   }
 };
@@ -25,6 +26,7 @@ exports.listTattooers = async (req, res) => {
     const tattooers = await User.find(filter).select("-password -__v");
     res.status(200).json(tattooers);
   } catch (error) {
+    console.error("Error al listar tatuadores:", error);
     res.status(500).json({ mensaje: "Error al listar tatuadores" });
   }
 };
@@ -38,6 +40,7 @@ exports.updateMe = async (req, res) => {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     res.status(200).json(usuario);
   } catch (error) {
+    console.error("Error al actualizar usuario:", error);
     res.status(400).json({ mensaje: "Solicitud no válida" });
   }
 };
@@ -48,6 +51,7 @@ exports.deleteMe = async (req, res) => {
     await User.findByIdAndDelete(req.user.id);
     res.status(204).json({ mensaje: "Usuario eliminado correctamente" });
   } catch (error) {
+    console.error("Error al eliminar usuario:", error);
     res.status(500).json({ mensaje: "Error al eliminar usuario" });
   }
 };
