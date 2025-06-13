@@ -7,7 +7,20 @@ const { createUserService } = require("../services/user.service");
 // @desc    Register new user
 // @access  Public
 exports.register = async (req, res) => {
-  const { fullName, email, password, role } = req.body;
+  // Desestructuramos TODOS los campos que quieres guardar
+  const {
+    fullName,
+    email,
+    password,
+    role,
+    city,
+    profileImageUrl,
+    favorites = [],
+    socialMedia = {},
+    status,
+    designs = []
+  } = req.body;
+
   try {
     const user = await createUserService({ fullName, email, password, role });
     res.status(201).json({ fullName: user.fullName, email: user.email });
@@ -54,10 +67,9 @@ exports.login = async (req, res) => {
 };
 
 // @route   POST /auth/logout
-// @desc    Logout (token invalidation TBD)
+// @desc    Logout (token invalidation frontend implementation)
 // @access  Private
 exports.logout = async (req, res) => {
-  // Implement token blacklist if needed
   res.status(204).send();
 };
 
