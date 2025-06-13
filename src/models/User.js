@@ -26,7 +26,7 @@ const userSchema = new Schema(
       facebook: String,
       whatsapp: String,
     },
-    status: { type: String, enum: ["active", "inactive"], default: "active" },
+    status: { type: String, enum: ["active", "inactive"], default: "inactive" },
 
     designs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Design" }],
     portfolio: [{ type: mongoose.Schema.Types.ObjectId, ref: "Design" }],

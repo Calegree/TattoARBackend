@@ -20,8 +20,8 @@ app.use("/v1/users", require("./src/routes/users.routes"));
 app.use("/v1/admin/users", require("./src/routes/admin.users.routes"));
 
 // Rutas
-app.use('/api/logs', require('./src/routes/logs.routes'));
-app.use('/api/reports', require('./src/routes/reports.routes'));
+app.use('/v1/logs', require('./src/routes/logs.routes'));
+app.use('/v1/reports', require('./src/routes/reports.routes'));
 
 // Rutas de diseños
 app.use("/v1/designs", require("./src/routes/designs.routes"));
