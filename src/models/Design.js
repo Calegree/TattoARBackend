@@ -38,5 +38,9 @@ const designSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    booleanAR: {
+        type: Boolean,
+        default: false
+    },
 });
 module.exports = mongoose.model('Design', designSchema);
