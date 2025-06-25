@@ -18,8 +18,12 @@ exports.getDesigns = async (req, res) => {
         const designs = await Design.find(filter);
         res.status(200).json(designs);
     } catch (error) {
-        console.error('Error retrieving designs:', error);
-        res.status(500).json({ code: 500, message: 'Error retrieving designs' });
+    console.error("Error retrieving designs:", error);
+    if (error.code === 50) {
+      res.status(503).json({ code: 503, message: "Query timeout (Mongo muy lento o sin índice)" });
+    } else {
+      res.status(500).json({ code: 500, message: "Error retrieving designs" });
+    }
     }
 };
 
