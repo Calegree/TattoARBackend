@@ -17,8 +17,8 @@ const userSchema = new Schema(
 
     role: { type: String, enum: ["client", "tattooer", "admin"], default: "client" },
 
-    cities: [String],
-    styles: [String],
+    cities: { type: [String], enum: ["Santiago", "Valparaíso", "Concepción", "La Serena", "Antofagasta", "Temuco", "Arica", "Puerto Montt"], default: [] },
+    styles: { type: [String], enum: ["moderno", "tradicional", "realista", "geométrico", "minimalista", "japones", "tribal", "acuarela", "blackwork"], default: [] },
 
     profileImageUrl: String,
 
