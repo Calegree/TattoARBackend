@@ -7,7 +7,6 @@ const bcrypt = require("bcrypt");
 
 const userSchema = new Schema(
   {
-    
     fullName: { type: String, required: true },
 
     username: { type: String,  unique: true },
@@ -18,7 +17,8 @@ const userSchema = new Schema(
 
     role: { type: String, enum: ["client", "tattooer", "admin"], default: "client" },
 
-    city: String,
+    cities: [String],
+    styles: [String],
 
     profileImageUrl: String,
 
