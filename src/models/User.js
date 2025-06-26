@@ -16,7 +16,8 @@ const userSchema = new Schema(
 
     role: { type: String, enum: ["client", "tattooer", "admin"], default: "client" },
 
-    city: String,
+    cities: [String],
+    styles: [String],
 
     profileImageUrl: String,
 
