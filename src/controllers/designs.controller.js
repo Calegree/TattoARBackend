@@ -15,7 +15,10 @@ exports.getDesigns = async (req, res) => {
             { description: { $regex: search, $options: 'i' } }
         ];
 
-        const designs = await Design.find(filter);
+        const designs = await Design.find(filter)
+            .populate('author', 'fullName email') // 👈 Agregado: trae solo nombre y correo
+            .exec();
+
         res.status(200).json(designs);
     } catch (error) {
         console.error('Error retrieving designs:', error);

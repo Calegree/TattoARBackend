@@ -3,10 +3,11 @@ const express = require("express");
 const connectDB = require("./src/config/db");
 const mongoose = require('mongoose');
 const app = express();
+const cors = require("cors");
 
 // Conectar a la base de datos
 connectDB();
-
+app.use(cors());
 // Middlewares
 app.use(express.json());
 
