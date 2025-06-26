@@ -20,7 +20,7 @@ exports.getDesigns = async (req, res) => {
         { description: { $regex: search, $options: "i" } },
       ];
 
-    const designs = await Design.find(filter).populate("author", "fullName");
+    const designs = await Design.find(filter).populate("author", "username profileImageUrl _id");
 
     res.status(200).json(designs);
   } catch (error) {
@@ -71,7 +71,7 @@ exports.createDesign = async (req, res) => {
     await User.findByIdAndUpdate(req.user.id, {
       $push: { designs: newDesign._id },
     });
-
+    await newDesign.populate('author', 'username profileImageUrl _id');
     res.status(201).json(newDesign);
   } catch (error) {
     console.error("Error al crear diseño:", error);
