@@ -8,7 +8,8 @@ const { createUserService } = require("../services/user.service");
 // @desc    Register new user
 // @access  Public
 exports.register = async (req, res) => {
-  const { fullName, email, password, role } = req.body;
+  const { fullName, email, password, isTattooer } = req.body;
+  const role = isTattooer ? 'tattooer' : 'client'
   try {
     const result = await createUserService({ fullName, email, password, role });
     res.status(201).json(result);
@@ -107,6 +108,7 @@ exports.verifyEmail = async (req, res) => {
 
     res.status(200).json({ message: 'Cuenta verificada y usuario creado correctamente.' });
   } catch (err) {
+    console.error(err);
     res.status(400).json({ message: 'Token inválido o expirado' });
   }
 };
@@ -122,7 +124,7 @@ exports.forgotPassword = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    const resetUrl = `http://localhost:4000/api/v1/auth/reset-password?token=${resetToken}`;
+    const resetUrl = `http://localhost:4000/v1/auth/reset-password?token=${resetToken}`;
     console.log(resetToken)
     await sendMail(
       user.email,
@@ -133,6 +135,7 @@ exports.forgotPassword = async (req, res) => {
     
     res.status(200).json({ message: 'Correo de recuperación enviado' });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Error en el servidor' });
   }
 };
@@ -149,6 +152,7 @@ exports.resetPasswordWithToken = async (req, res) => {
 
     res.status(200).json({ message: 'Contraseña restablecida con éxito' });
   } catch (err) {
+    console.error(err);
     res.status(400).json({ message: 'Token inválido o expirado' });
   }
 };

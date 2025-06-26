@@ -5,6 +5,18 @@ const authenticate  = require("../middlewares/auth.middleware");
 const authorizeRole = require("../middlewares/role.middleware");
 const validateOwner = require("../middlewares/owner.middleware");
 
+const multer = require("multer");
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+        if (!allowedTypes.includes(file.mimetype)) {
+            return cb(new Error("Only PNG and JPEG images are allowed"));
+        }
+        cb(null, true);
+    },
+});
 // Public
 router.get("/", designsController.getDesigns);
 router.get("/:designId", designsController.getDesignById);
@@ -14,6 +26,7 @@ router.post(
     "/",
     authenticate,
     authorizeRole("tattooer"),
+    upload.single("image"),
     designsController.createDesign
 );
 
@@ -21,6 +34,7 @@ router.post(
     "/portfolio",
     authenticate,
     authorizeRole("tattooer"),
+    upload.single("image"),
     designsController.addToPortfolio
 );
 

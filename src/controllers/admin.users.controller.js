@@ -11,6 +11,7 @@ exports.listUsers = async (req, res) => {
     const users = await User.find(filter);
     res.status(200).json(users);
   } catch (error) {
+    console.error("Error al listar usuarios:", error);
     res.status(500).json({ mensaje: "Error al listar usuarios" });
   }
 };
@@ -24,6 +25,7 @@ exports.createUser = async (req, res) => {
     const user = await createUserService({ fullName, email, password, role });
     res.status(201).json(user);
   } catch (err) {
+    console.error("Error al crear usuario:", err);
     res.status(400).json({ mensaje: err.message });
   }
 };
@@ -36,6 +38,7 @@ exports.getUser = async (req, res) => {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     res.status(200).json(usuario);
   } catch (error) {
+    console.error("Error al obtener usuario:", error);
     res.status(500).json({ mensaje: "Error al obtener usuario" });
   }
 };
@@ -50,6 +53,7 @@ exports.updateUser = async (req, res) => {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     res.status(200).json(usuario);
   } catch (error) {
+    console.error("Error al actualizar usuario:", error);
     res.status(400).json({ mensaje: "Solicitud no válida" });
   }
 };
@@ -60,6 +64,7 @@ exports.deleteUser = async (req, res) => {
     await User.findByIdAndDelete(req.params.userId);
     res.status(204).json({ mensaje: "Usuario eliminado correctamente" });
   } catch (error) {
+    console.error("Error al eliminar usuario:", error);
     res.status(500).json({ mensaje: "Error al eliminar usuario" });
   }
 };
@@ -76,6 +81,7 @@ exports.changeStatus = async (req, res) => {
       return res.status(404).json({ mensaje: "Usuario no encontrado" });
     res.status(200).json(usuario);
   } catch (error) {
+    console.error("Error al cambiar estado de usuario:", error);
     res.status(400).json({ mensaje: "Solicitud no válida" });
   }
 };
@@ -91,6 +97,7 @@ exports.listTattooers = async (req, res) => {
     const tattooers = await User.find(filter).select("-password -__v");
     res.status(200).json(tattooers);
   } catch (error) {
+    console.error("Error al listar tatuadores:", error);
     res.status(500).json({ mensaje: "Error al listar tatuadores" });
   }
 };

@@ -26,9 +26,12 @@ router.put('/me', authMiddleware, usersController.updateMe);
 // @access  Private
 router.delete('/me', authMiddleware, usersController.deleteMe);
 
-// Favoritos
+// Favorites
 router.get("/me/favorites", authenticate, usersController.listFavorites);
 router.post("/me/favorites", authenticate, usersController.addFavorite);
 router.delete("/me/favorites/:designId", authenticate, usersController.removeFavorite);
+
+// Reports
+router.post('/report', authMiddleware, usersController.sendReport);
 
 module.exports = router;

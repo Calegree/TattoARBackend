@@ -10,6 +10,8 @@ const userSchema = new Schema(
     
     fullName: { type: String, required: true },
 
+    username: { type: String,  unique: true },
+    
     email: { type: String, required: true, unique: true },
 
     password: { type: String, required: true },
@@ -31,6 +33,7 @@ const userSchema = new Schema(
 
     designs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Design" }],
     portfolio: [{ type: mongoose.Schema.Types.ObjectId, ref: "Design" }],
+    reportCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
