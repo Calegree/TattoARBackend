@@ -8,7 +8,8 @@ const { createUserService } = require("../services/user.service");
 // @desc    Register new user
 // @access  Public
 exports.register = async (req, res) => {
-  const { fullName, email, password, role } = req.body;
+  const { fullName, email, password, isTattooer } = req.body;
+  const role = isTattooer ? 'tattooer' : 'client'
   try {
     const result = await createUserService({ fullName, email, password, role });
     res.status(201).json(result);
