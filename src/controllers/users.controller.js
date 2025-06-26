@@ -60,7 +60,7 @@ exports.deleteMe = async (req, res) => {
 exports.getUserById = async (req, res) => {
   try {
     const usuario = await User.findById(req.params.userId).select(
-      "-password -email -role -city -favorites -status -designs"
+      "-password -email -role -city -favorites -status"
     );
     if (!usuario)
       return res.status(404).json({ mensaje: "Usuario no encontrado" });

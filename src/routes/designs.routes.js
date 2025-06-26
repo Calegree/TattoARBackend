@@ -20,6 +20,8 @@ const upload = multer({
 // Public
 router.get("/", designsController.getDesigns);
 router.get("/:designId", designsController.getDesignById);
+router.get("/author/:authorId/filter", designsController.getDesignsByAuthorAndIds); 
+
 
 // Protected
 router.post(

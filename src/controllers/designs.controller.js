@@ -20,7 +20,7 @@ exports.getDesigns = async (req, res) => {
         { description: { $regex: search, $options: "i" } },
       ];
 
-    const designs = await Design.find(filter).populate("author", "username profileImageUrl _id");
+    const designs = await Design.find(filter).populate("author", "username profileImageUrl _id, fullName");
 
     res.status(200).json(designs);
   } catch (error) {
@@ -37,6 +37,38 @@ exports.getDesigns = async (req, res) => {
     }
   }
 };
+
+// Obtener diseños por IDs filtrando que author sea el dueño del perfil
+exports.getDesignsByAuthorAndIds = async (req, res) => {
+  try {
+    const { authorId } = req.params;
+    const { ids } = req.query;
+
+    if (!ids) {
+      return res.status(400).json({ code: 400, message: "Falta parámetro ids" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(authorId)) {
+      return res.status(400).json({ code: 400, message: "authorId inválido" });
+    }
+
+    const designIds = ids
+      .split(',')
+      .filter(id => mongoose.Types.ObjectId.isValid(id)) // ✅ solo IDs válidos
+      .map(id => new mongoose.Types.ObjectId(id));
+
+    const designs = await Design.find({
+      _id: { $in: designIds },
+      author: authorId
+    }).populate("author", "username profileImageUrl _id fullName");
+
+    res.status(200).json(designs);
+  } catch (error) {
+    console.error("Error retrieving designs by author and ids:", error);
+    res.status(500).json({ code: 500, message: "Error retrieving designs" });
+  }
+};
+
 
 // Crear nuevo diseño (solo tatuador)
 exports.createDesign = async (req, res) => {
@@ -71,7 +103,7 @@ exports.createDesign = async (req, res) => {
     await User.findByIdAndUpdate(req.user.id, {
       $push: { designs: newDesign._id },
     });
-    await newDesign.populate('author', 'username profileImageUrl _id');
+    await newDesign.populate('author', 'username profileImageUrl _id fullName');
     res.status(201).json(newDesign);
   } catch (error) {
     console.error("Error al crear diseño:", error);
@@ -121,7 +153,7 @@ exports.getDesignById = async (req, res) => {
   try {
     const design = await Design.findById(req.params.designId).populate(
       "author",
-      "fullName email"
+      "fullName email username profileImageUrl _id"
     );
     if (!design)
       return res
