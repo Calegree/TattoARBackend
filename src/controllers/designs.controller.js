@@ -55,7 +55,7 @@ exports.getDesignsByAuthorAndIds = async (req, res) => {
     const designIds = ids
       .split(',')
       .filter(id => mongoose.Types.ObjectId.isValid(id)) // ✅ solo IDs válidos
-      .map(id => new mongoose.Types.ObjectId(id));
+      .map(id => mongoose.Types.ObjectId.createFromHexString(id));
 
     const designs = await Design.find({
       _id: { $in: designIds },
