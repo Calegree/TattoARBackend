@@ -1,4 +1,63 @@
 const User = require("../models/User");
+const multer = require("multer");
+const path = require("path");
+
+const r2 = require("../config/r2.config");
+
+// Función para subir archivos a R2
+const uploadToR2 = async (buffer, fileName, mimetype) => {
+  const params = {
+    Bucket: process.env.R2_BUCKET,
+    Key: `profileImg/${fileName}`,
+    Body: buffer,
+    ContentType: mimetype,
+  };
+
+  try {
+    const result = await r2.upload(params).promise();
+    
+    // Generar URL pública personalizada
+    // Si tienes un dominio personalizado configurado en R2
+    if (process.env.R2_DEV_ENDPOINT) {
+      return `${process.env.R2_DEV_ENDPOINT}/profileImg/${fileName}`;
+    }
+    
+    // Si no tienes dominio personalizado, usar la URL directa de R2
+    return result.Location;
+  } catch (error) {
+    console.error("Error uploading to R2:", error);
+    throw error;
+  }
+};
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+// Subir imagen de perfil
+exports.uploadProfileImage = [
+  upload.single("file"),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "No se envió ningún archivo." });
+      }
+
+      // Sube el archivo a R2 y obtén la URL
+      const ext = path.extname(req.file.originalname);
+      const fileName = `profile_${Date.now()}${ext}`;
+      const url = await uploadToR2(
+        req.file.buffer,
+        fileName,
+        req.file.mimetype
+      );
+
+      return res.json({ url });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Error al subir la imagen." });
+    }
+  },
+];
 
 // Listar usuarios
 exports.listUsers = async (req, res) => {
