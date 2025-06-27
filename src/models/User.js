@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const { Schema, model } = require("mongoose");
@@ -15,7 +14,11 @@ const userSchema = new Schema(
 
     password: { type: String, required: true },
 
-    role: { type: String, enum: ["client", "tattooer", "admin"], default: "client" },
+    role: {
+      type: String,
+      enum: ["client", "tattooer", "admin"],
+      default: "client",
+    },
 
     cities: {
       type: [String], enum: ['Santiago', 'Valparaíso', 'Viña del Mar', 'Concepción', 'La Serena',
@@ -44,7 +47,5 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
-
-
 
 module.exports = model("User", userSchema);

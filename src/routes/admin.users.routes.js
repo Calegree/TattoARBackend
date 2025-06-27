@@ -3,6 +3,12 @@ const router = express.Router();
 const adminUsersController = require("../controllers/admin.users.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
 
+// Ruta para subir imagen de perfil
+router.post(
+  "/upload-profile-image",
+  adminUsersController.uploadProfileImage
+);
+
 // Listar usuarios
 router.get("/", authMiddleware, adminUsersController.listUsers);
 
@@ -27,5 +33,7 @@ router.put(
   authMiddleware,
   adminUsersController.changeStatus
 );
+
+router.put('/toggle-state/:userId', adminUsersController.toggleUserState);
 
 module.exports = router;
