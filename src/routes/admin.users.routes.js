@@ -34,4 +34,6 @@ router.put(
   adminUsersController.changeStatus
 );
 
+router.put('/toggle-state/:userId', adminUsersController.toggleUserState);
+
 module.exports = router;

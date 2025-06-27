@@ -20,18 +20,18 @@ exports.getDesigns = async (req, res) => {
         { description: { $regex: search, $options: "i" } },
       ];
 
-    const designs = await Design.find(filter).populate("author", "username profileImageUrl _id, fullName");
+    const designs = await Design.find(filter)
+      .populate("author", "fullName username profileImageUrl _id")
+      .exec();
 
     res.status(200).json(designs);
   } catch (error) {
     console.error("Error retrieving designs:", error);
     if (error.code === 50) {
-      res
-        .status(503)
-        .json({
-          code: 503,
-          message: "Query timeout (Mongo muy lento o sin índice)",
-        });
+      res.status(503).json({
+        code: 503,
+        message: "Query timeout (Mongo muy lento o sin índice)",
+      });
     } else {
       res.status(500).json({ code: 500, message: "Error retrieving designs" });
     }
@@ -103,7 +103,7 @@ exports.createDesign = async (req, res) => {
     await User.findByIdAndUpdate(req.user.id, {
       $push: { designs: newDesign._id },
     });
-    await newDesign.populate('author', 'username profileImageUrl _id fullName');
+    await newDesign.populate("author", "username profileImageUrl _id");
     res.status(201).json(newDesign);
   } catch (error) {
     console.error("Error al crear diseño:", error);

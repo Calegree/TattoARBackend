@@ -145,6 +145,22 @@ exports.changeStatus = async (req, res) => {
   }
 };
 
+exports.toggleUserState = async (req, res) => {
+  try {
+    const usuario = await User.findById(req.params.userId);
+    if (!usuario)
+      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+
+    // Alterna status entre 'active' e 'inactive'
+    usuario.status = usuario.status === "active" ? "inactive" : "active";
+    await usuario.save();
+    res.status(200).json(usuario);
+  } catch (error) {
+    console.error("Error al cambiar el estado del usuario:", error);
+    res.status(500).json({ mensaje: "Error al cambiar el estado del usuario" });
+  }
+};
+
 // Listar tatuadores
 exports.listTattooers = async (req, res) => {
   try {
