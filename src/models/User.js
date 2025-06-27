@@ -28,7 +28,7 @@ const userSchema = new Schema(
     },
     styles: {
       type: [String], enum: ['Tradicional', 'Realismo', 'Acuarela', 'Geométrico', 'Minimalista',
-        'Neo-tradicional', 'Japonés', 'Blackwork', 'Fineline', 'Lettering'], default: []
+        'Neo-tradicional', 'Japonés', 'Blackwork', 'Fineline', 'Lettering', 'Moderno', 'Clásico'], default: []
     },
 
     profileImageUrl: String,

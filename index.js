@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const connectDB = require("./src/config/db");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const app = express();
 const cors = require("cors");
 
@@ -27,11 +27,14 @@ app.use("/v1/admin/users", require("./src/routes/admin.users.routes"));
 app.use("/v1/admin/designs", require("./src/routes/admin.designs.routes"));
 
 // Rutas
-app.use('/v1/logs', require('./src/routes/logs.routes'));
-app.use('/v1/reports', require('./src/routes/reports.routes'));
+app.use("/v1/logs", require("./src/routes/logs.routes"));
+app.use("/v1/reports", require("./src/routes/reports.routes"));
 
 // Rutas de diseños
 app.use("/v1/designs", require("./src/routes/designs.routes"));
+
+// Rutas de métricas
+app.use("/v1/metrics", require("./src/routes/metrics.routes"));
 
 // Puerto
 const PORT = process.env.PORT || 4000;
