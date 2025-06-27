@@ -10,7 +10,7 @@ app.use(cors());
 
 // Conectar a la base de datos
 connectDB();
-
+app.use(cors());
 // Middlewares
 app.use(express.json());
 
