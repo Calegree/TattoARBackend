@@ -20,17 +20,22 @@ exports.listTattooers = async (req, res) => {
     const { city, style, search } = req.query;
     const filter = { role: "tattooer" };
 
-    if (city) filter.city = city;
+    if (city) filter.cities = { $in: [city] };
     if (search) filter.fullName = { $regex: search, $options: "i" };
-    if (style) filter["styles"] = { $regex: style, $options: "i" }; // si tienes un campo styles
+    if (style) filter.styles = { $in: [new RegExp(style, "i")] };
 
     const tattooers = await User.find(filter).select("-password -__v");
     res.status(200).json(tattooers);
   } catch (error) {
     console.error("Error al listar tatuadores:", error);
-    res.status(500).json({ mensaje: "Error al listar tatuadores" });
+    res.status(500).json({
+      mensaje: "Error al listar tatuadores",
+      error: error.message,
+      stack: error.stack,
+    });
   }
 };
+
 
 exports.updateMe = async (req, res) => {
   try {
@@ -60,7 +65,7 @@ exports.deleteMe = async (req, res) => {
 exports.getUserById = async (req, res) => {
   try {
     const usuario = await User.findById(req.params.userId).select(
-      "-password -email -role -city -favorites -status"
+      "-password -email -role -favorites -status"
     );
     if (!usuario)
       return res.status(404).json({ mensaje: "Usuario no encontrado" });

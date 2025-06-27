@@ -11,6 +11,11 @@ const authMiddleware = require("../middlewares/auth.middleware");
 // @access  Private
 router.get('/me', authMiddleware, usersController.getMe);
 
+// @route   GET /api/v1/users/tattooers
+// @desc    List tattooers with optional filters
+// @access  Public
+router.get('/tattooers', usersController.listTattooers)
+
 // @route   GET /api/v1/users/:userId
 // @desc    Get public profile by user ID
 // @access  Public

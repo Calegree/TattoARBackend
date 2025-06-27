@@ -11,11 +11,6 @@ const designSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    styles: {
-        type: [String],
-        enum: ['modern', 'classic', 'vintage', 'minimalist', 'other'],
-        default: ['other']
-    },
     likes: {
         type: Number,
         default: 0

@@ -10,15 +10,23 @@ const userSchema = new Schema(
     fullName: { type: String, required: true },
 
     username: { type: String },
-    
+
     email: { type: String, required: true, unique: true },
 
     password: { type: String, required: true },
 
     role: { type: String, enum: ["client", "tattooer", "admin"], default: "client" },
 
-    cities: { type: [String], enum: ["Santiago", "Valparaíso", "Concepción", "La Serena", "Antofagasta", "Temuco", "Arica", "Puerto Montt"], default: [] },
-    styles: { type: [String], enum: ["moderno", "tradicional", "realista", "geométrico", "minimalista", "japones", "tribal", "acuarela", "blackwork"], default: [] },
+    cities: {
+      type: [String], enum: ['Santiago', 'Valparaíso', 'Viña del Mar', 'Concepción', 'La Serena',
+        'Antofagasta', 'Temuco', 'Rancagua', 'Puerto Montt', 'Iquique',
+        'Talca', 'Arica', 'Copiapó', 'Chillán', 'Punta Arenas',
+        'Los Ángeles', 'Curicó', 'Osorno', 'Quilpué', 'San Fernando'], default: []
+    },
+    styles: {
+      type: [String], enum: ['Tradicional', 'Realismo', 'Acuarela', 'Geométrico', 'Minimalista',
+        'Neo-tradicional', 'Japonés', 'Blackwork', 'Fineline', 'Lettering'], default: []
+    },
 
     profileImageUrl: String,
 
