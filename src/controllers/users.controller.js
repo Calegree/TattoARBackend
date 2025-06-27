@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const Report = require("../models/Report");
-
+const Design = require("../models/Design");
 // Detallar usuario
 exports.getMe = async (req, res) => {
   try {
@@ -134,47 +134,50 @@ exports.sendReport = async (req, res) => {
     if (!reports_id || !type || !reason || !description) {
       return res.status(400).json({ mensaje: "Faltan campos obligatorios" });
     }
-    console.log("creando reporteee");
-    // Crear el nuevo reporte
+
+    let finalImage = image;
+
+    if (!finalImage) {
+      if (type === "tattooer") {
+        const reportedUser = await User.findById(reports_id);
+        finalImage = reportedUser?.profileImageUrl || null;
+      } else if (type === "design") {
+        const reportedDesign = await Design.findById(reports_id);
+        finalImage = reportedDesign?.designURL || null;
+      }
+    }
+
     const newReport = new Report({
-      user_id: req.user.id, // Asegúrate de que el middleware de autenticación esté estableciendo `req.user`
+      user_id: req.user.id,
       reports_id,
       type,
       reason,
       description,
-      image,
+      image: finalImage,
     });
-    console.log("Nuevo reporte creado:", newReport);
     await newReport.save();
 
-    // Crear notificación para el administrador
+    // Crear UNA notificación para el primer admin encontrado
     const Notification = require("../models/Notification");
-    const adminUsers = await User.find({ role: "admin" });
-    const notificationPromises = adminUsers.map((admin) =>
-      Notification.create({
-        user: admin._id,
-        reason: reason,
+    const adminUser = await User.findOne({ role: "admin" });
+    if (adminUser) {
+      await Notification.create({
+        user: adminUser._id,
         type: type,
-        image: image || null,
-        state: "pending",
+        description: `Se ha recibido un nuevo reporte de tipo "${type}".`,
+        image: finalImage,
         title: "Nuevo reporte recibido",
-        message: `Se ha recibido un nuevo reporte de tipo "${type}".`,
         link: `/admin/reports`,
         isRead: false,
         createdAt: new Date(),
-      })
-    );
-    console.log(
-      "Notificaciones creadas para administradores:",
-      notificationPromises.length
-    );
-    await Promise.all(notificationPromises);
+      });
+    }
 
     // Si es un reporte a un tatuador o diseño, incrementar su contador
     if (type === "tattooer" || type === "design") {
       await User.findByIdAndUpdate(
         reports_id,
-        { $inc: { reportCounter: 1 } },
+        { $inc: { reportCount: 1 } },
         { new: true }
       );
     }
