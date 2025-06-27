@@ -17,3 +17,21 @@ exports.banDesign = async (req, res) => {
     res.status(500).json({ mensaje: "Error al cambiar el estado del diseño" });
   }
 };
+
+exports.changeNotificationState = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const Notification = require("../models/Notification");
+    const notification = await Notification.findByIdAndUpdate(
+      id,
+      { isRead: true },
+      { new: true }
+    );
+    if (!notification) {
+      return res.status(404).json({ mensaje: "Notificación no encontrada" });
+    }
+    res.status(200).json(notification);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al cambiar el estado de la notificación" });
+  }
+};

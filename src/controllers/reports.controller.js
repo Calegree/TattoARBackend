@@ -1,4 +1,5 @@
 const Report = require('../models/Report');
+const Notification = require('../models/Notification');
 
 exports.getAllReports = async (req, res) => {
   try {
@@ -28,5 +29,37 @@ exports.updateReportState = async (req, res) => {
   } catch (error) {
     console.error('Error al actualizar el reporte:', error);
     res.status(500).json({ mensaje: 'Error al actualizar el reporte' });
+  }
+};
+
+exports.getNotifications = async (req, res) => {
+  try {
+    const notifications = await Notification.find()
+      .populate('user', 'fullName')
+      .sort({ createdAt: -1 })
+      .limit(4);
+
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error('Error al obtener las notificaciones:', error);
+    res.status(500).json({ mensaje: 'Error al obtener las notificaciones' });
+  }
+}
+
+exports.changeNotificationState = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const Notification = require("../models/Notification");
+    const notification = await Notification.findByIdAndUpdate(
+      id,
+      { isRead: true },
+      { new: true }
+    );
+    if (!notification) {
+      return res.status(404).json({ mensaje: "Notificación no encontrada" });
+    }
+    res.status(200).json(notification);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error al cambiar el estado de la notificación" });
   }
 };
