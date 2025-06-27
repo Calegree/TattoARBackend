@@ -60,7 +60,7 @@ exports.getDesignsByAuthorAndIds = async (req, res) => {
     const designs = await Design.find({
       _id: { $in: designIds },
       author: authorId
-    }).populate("author", "username profileImageUrl _id fullName");
+    }).populate("author", "username profileImageUrl _id cities styles designs portfolio socialmedia");
 
     res.status(200).json(designs);
   } catch (error) {
