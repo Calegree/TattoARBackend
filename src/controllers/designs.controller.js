@@ -12,8 +12,9 @@ exports.getDesigns = async (req, res) => {
       booleanAR: true, // Solo obtener los diseños que son diseños (no portafolios)
     };
 
-    if (city) filter.city = city;
-    if (style) filter.styles = style;
+    if (city) filter.cities = { $in: Array.isArray(city) ? city : [city] };
+    if (style) filter.styles = { $in: Array.isArray(style) ? style : [style] };
+
     if (search)
       filter.$or = [
         { title: { $regex: search, $options: "i" } },
@@ -21,7 +22,7 @@ exports.getDesigns = async (req, res) => {
       ];
 
     const designs = await Design.find(filter)
-      .populate("author", "fullName username profileImageUrl _id")
+      .populate("author", "username profileImageUrl _id cities styles designs portfolio socialmedia")
       .exec();
 
     res.status(200).json(designs);
@@ -103,7 +104,7 @@ exports.createDesign = async (req, res) => {
     await User.findByIdAndUpdate(req.user.id, {
       $push: { designs: newDesign._id },
     });
-    await newDesign.populate("author", "username profileImageUrl _id");
+    await newDesign.populate("author", "username profileImageUrl _id cities styles designs portfolio socialmedia");
     res.status(201).json(newDesign);
   } catch (error) {
     console.error("Error al crear diseño:", error);
@@ -153,7 +154,7 @@ exports.getDesignById = async (req, res) => {
   try {
     const design = await Design.findById(req.params.designId).populate(
       "author",
-      "fullName email username profileImageUrl _id"
+      "username profileImageUrl _id cities styles designs portfolio socialmedia"
     );
     if (!design)
       return res
