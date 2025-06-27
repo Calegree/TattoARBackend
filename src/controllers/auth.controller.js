@@ -124,7 +124,8 @@ exports.forgotPassword = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    const resetUrl = `http://localhost:4000/v1/auth/reset-password?token=${resetToken}`;
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:4000';
+    const resetUrl = `${backendUrl}/auth/reset-password?token=${resetToken}`;
     console.log(resetToken)
     await sendMail(
       user.email,
